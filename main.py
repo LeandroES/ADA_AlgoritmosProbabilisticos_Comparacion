@@ -1,65 +1,137 @@
-# Python3 code to implement Freivald’s Algorithm
-import random
+import math
+import numpy as np
+import time
 
-N = 2
+def matrixSimple ():
+    array = np.random.randint(10, size=(1000, 1000))
+    return array
+
+a = matrixSimple()
+b = matrixSimple()
+c = a*b
+
+c[4][4]=19
+c[16][16]=31
+c[25][25]=89
+c[36][36]=97
+c[64][64]=83
+#%%
+meta = 90.0
+
+def vefMatrizMult (a,b,c,meta):
+    MR = a * b
+    sumando = 0.0
+    largo = len(MR)
+    flag = True
+    for i in range(largo):
+        for j in range(largo):
+            if MR[i][j] == c[i][j]:
+                sumando = sumando + 1
+
+    meta = (math.pow(largo,2)*meta)/100
+
+    print(sumando)
+    print(meta)
+
+    if meta <= sumando:
+        flag = True
+    else:
+        flag = False
+
+    print(flag)
+    return
+
+inicio = time.time()
+vefMatrizMult(a,b,c,meta)
+fin = time.time()
+print(fin-inicio)
+#%%
+def Freivalds(a, b, c, N):
+    # Generar un vector aleatorio
+    largos = len(a)
+    X = [0] * largos
+
+    X=np.random.randint(N, size=largos)
+
+    BX = [0] * largos
+
+    for i in range(0, largos):
+        for j in range(0, largos):
+            BX[i] = BX[i] + b[i][j] * X[j]
+
+    CX = [0] * largos
+    for i in range(0, largos):
+        for j in range(0, largos):
+            CX[i] = CX[i] + c[i][j] * X[j]
 
 
-# Function to check if ABx = Cx
-def freivald(a, b, c):
-    # Generate a random vector
-    r = [0] * N
+    ABX = [0] * largos
+    for i in range(0, largos):
+        for j in range(0, largos):
+            ABX[i] = ABX[i] + a[i][j] * BX[j]
 
-    for i in range(0, N):
-        r[i] = (int)(random.randrange(509090009) % 2)
-
-    # Now compute B*r for evaluating
-    # expression A * (B*r) - (C*r)
-    br = [0] * N
-
-    for i in range(0, N):
-        for j in range(0, N):
-            br[i] = br[i] + b[i][j] * r[j]
-
-    # Now compute C*r for evaluating
-    # expression A * (B*r) - (C*r)
-    cr = [0] * N
-    for i in range(0, N):
-        for j in range(0, N):
-            cr[i] = cr[i] + c[i][j] * r[j]
-
-    # Now compute A* (B*r) for evaluating
-    # expression A * (B*r) - (C*r)
-    axbr = [0] * N
-    for i in range(0, N):
-        for j in range(0, N):
-            axbr[i] = axbr[i] + a[i][j] * br[j]
-
-    # Finally check if value of expression
-    # A * (B*r) - (C*r) is 0 or not
-    for i in range(0, N):
-        if (axbr[i] - cr[i] != 0):
+    for i in range(0, largos):
+        if (ABX[i] - CX[i] != 0):
+            print("False")
             return False
-
+    print("True")
     return True
 
+N=2
+inicio2 = time.time()
+Freivalds(a,b,c,N)
+fin2 = time.time()
+print(fin2-inicio2)
+#%%
 
-# Runs k iterations Freivald. The value
-# of k determines accuracy. Higher value
-# means higher accuracy.
-def isProduct(a, b, c, k):
-    for i in range(0, k):
-        if (freivald(a, b, c) == False):
+def Freivalds(a, b, c, N):
+    largos = len(a)
+    X = [0] * largos
+
+    X=np.random.randint(N, size=largos)
+
+    BX = [0] * largos
+
+    for i in range(0, largos):
+        for j in range(0, largos):
+            BX[i] = BX[i] + b[i][j] * X[j]
+
+    CX = [0] * largos
+    for i in range(0, largos):
+        for j in range(0, largos):
+            CX[i] = CX[i] + c[i][j] * X[j]
+
+    ABX = [0] * largos
+    for i in range(0, largos):
+        for j in range(0, largos):
+            ABX[i] = ABX[i] + a[i][j] * BX[j]
+
+    #print("axbr")
+    #print(ABX)
+
+    for i in range(0, largos):
+        if (ABX[i] - CX[i] != 0):
             return False
     return True
 
+def RepeatFreivalds(a,b,c,N,K):
+    sumando = 0
+    final = [0] * K
+    for i in range(0, K):
+        final[i] = Freivalds(a,b,c,N)
+    for j in range(0, K):
+        if (final[1] != final[j]):
+            sumando = sumando + 1
+    print(final)
+    if (sumando > 0):
+        print("False")
+        return False
+    print("True")
+    return True
 
-# Driver code
-a = [[1, 1], [1, 1]]
-b = [[1, 1], [1, 1]]
-c = [[2, 2], [2, 2]]
-k = 2
-
-if (isProduct(a, b, c, k)):
-    print("Yes")
-else:
-    print("No")
+N=2
+K=10
+inicio3 = time.time()
+RepeatFreivalds(a,b,c,N,K)
+fin3 = time.time()
+print(fin3-inicio3)
